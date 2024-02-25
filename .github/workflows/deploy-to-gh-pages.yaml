@@ -9,10 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    env:
+      working-directory: ./na-log
+      baseUrl: /na-log
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: true
 
       - name: Setup node
         uses: actions/setup-node@v3
@@ -20,32 +25,34 @@ jobs:
           node-version: 21
 
       - name: Copy posts
-        run: cp -f posts na-log/
+        run: cp -r -f posts ${{ env.working-directory }}
 
       - name: Copy public
-        run: cp -f public na-log/
+        run: cp -r -f public ${{ env.working-directory }}
 
-      - name: Move into Engine
-        run: cd na-log/
+      - name: test
+        run: |
+          cd|
+          dir
 
-      - name: Check node-modules
-        uses: actions/cache@v3
-        id: node-modules-cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
+      - name: test
+        working-directory: ${{ env.working-directory }}
+        run: |
+          cd|
+          dir
+          
       - name: Install dependencies
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        working-directory: ${{ env.working-directory }}
         run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Build React
+        working-directory: ${{ env.working-directory }}
         run: yarn build
-
+        env:
+          basePath: na-log-test
+          
       - name: Deploy to 'gh-pages' branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          publish_dir: ${{ env.working-directory }}/out
