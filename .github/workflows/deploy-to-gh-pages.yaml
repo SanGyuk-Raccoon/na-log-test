@@ -33,7 +33,6 @@ jobs:
         uses: actions/cache@v3
         id: node-modules-cache
         with:
-          working-directory: ${{ env.working-directory }}
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
