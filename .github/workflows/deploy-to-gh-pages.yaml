@@ -28,17 +28,6 @@ jobs:
 
       - name: Copy public
         run: cp -r -f public ${{ env.working-directory }}
-
-      - name: test
-        run: |
-          cd|
-          dir
-
-      - name: test
-        working-directory: ${{ env.working-directory }}
-        run: |
-          cd|
-          dir
           
       - name: Install dependencies
         working-directory: ${{ env.working-directory }}
@@ -46,9 +35,11 @@ jobs:
 
       - name: Build React
         working-directory: ${{ env.working-directory }}
-        run: yarn build
+        run: |
+           echo $GITHUB_REPOSITORY |
+           yarn build
         env:
-          basePath: /na-log-test
+          GITHUB_REPOSITORY: $GITHUB_REPOSITORY
 
       - name: Deploy to 'gh-pages' branch
         uses: peaceiris/actions-gh-pages@v3
