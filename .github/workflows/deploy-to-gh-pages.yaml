@@ -29,7 +29,18 @@ jobs:
       - name: Copy public
         run: cp -r -f public ${{ env.working-directory }}
           
+      - name: Check node-modules
+        uses: actions/cache@v3
+        id: node-modules-cache
+        with:
+          working-directory: ${{ env.working-directory }}
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.working-directory }}
         run: yarn install --immutable --immutable-cache --check-cache
 
